@@ -1,0 +1,30 @@
+---
+title: Home
+---
+
+<div class="mx-auto max-w-content py-16 text-center">
+  {/* Blume's page template always renders its own hidden `<h1>{title}</h1>`
+  ahead of this content (see theme.css) with no slot to suppress it, so this
+  is a styled `role="heading"` div rather than a second literal <h1> — see
+  src/components/TitleHierarchy.astro for the same pattern on chapter pages.
+  It's also kept on one line: MDX's HTML-block handling wraps a JSX
+  element's text in a stray <p> when the tag and text span separate lines. */}
+  <div aria-level="1" class="mb-2 font-semibold text-4xl text-black md:text-5xl dark:text-white" role="heading">The Network State</div>
+  <p class="mb-1 text-lg text-muted-foreground">How To Start a New Country</p>
+  <p class="mb-8 text-muted-foreground text-sm">Balaji S. Srinivasan</p>
+
+  <div class="flex justify-center">
+    <PillButton href="/preamble">
+      <span class="font-bold text-sm">Read the Book</span>
+    </PillButton>
+  </div>
+</div>
+
+_Placeholder text — structural stand-in only, not the source book's prose.
+This landing page exists to validate the homepage route and its link into the
+chapter tree; the reference site's actual homepage copy is not reproduced
+here._
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor
+incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
+nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.

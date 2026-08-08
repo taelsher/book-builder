@@ -1,0 +1,23 @@
+---
+// Override of blume/components/layout/Logo.astro. The default inlines a
+// single-string logo as raw SVG so `currentColor` follows the theme, but
+// our source file (thenetworkstate.svg) has hardcoded fill="black"/"white"
+// paths. The reference site instead ships one <img> and inverts it with a
+// CSS filter in dark mode (.icon-invert, defined in theme.css) — reproduced
+// here rather than recoloring the source asset.
+interface Props {
+  site: { title: string };
+  logo?: { light?: string; dark?: string; alt?: string; href?: string; text?: string } | null;
+}
+
+const { site, logo } = Astro.props;
+const src = logo?.light ?? logo?.dark ?? "/images/thenetworkstate.svg";
+const alt = logo?.alt || "The Network State Logo";
+const href = logo?.href ?? "/";
+const brandText = logo?.text ?? site.title;
+---
+
+<a class="inline-flex min-w-0 items-center gap-2 font-semibold text-base text-foreground" href={href}>
+  <img alt={alt} class="icon-invert h-[26px] w-auto" height="26" src={src} width="220" />
+  {brandText && <span class="truncate">{brandText}</span>}
+</a>

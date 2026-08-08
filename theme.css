@@ -1,0 +1,88 @@
+/* Measured values from thenetworkstate.com — see reference/notes.md */
+
+:root {
+  --blume-border: #d1d5db; /* gray-300 */
+  /* gray-400 (#9ca3af), the reference site's measured value, is only 2.54:1
+     against white — fails WCAG AA (needs 4.5:1 for text, 3:1 for icons).
+     gray-600 passes comfortably in light mode; dark mode gets its own
+     override below rather than relying on the cascade, since a value that
+     passes against white can fail against the dark background and vice
+     versa. */
+  --blume-muted-foreground: #4b5563; /* gray-600 */
+  --blume-content-width: 714px;
+}
+
+:root[data-theme="dark"] {
+  --blume-border: #374151; /* gray-700 */
+  --blume-muted-foreground: #9ca3af; /* gray-400 — 6.48:1 against the dark bg */
+}
+
+/* Dark-mode icon inversion, applied directly on <img> per the reference site's
+   own pattern (not a wrapping element). */
+.icon-invert {
+  filter: invert(0);
+}
+
+:root[data-theme="dark"] .icon-invert {
+  filter: invert(1);
+}
+
+/* The reference site has no right-hand rail at any viewport width — no table
+   of contents, no page actions (scroll to top / copy as markdown / open in
+   chat / export / MCP) — just a single centered column. Blume's RootLayout
+   has no prop to drop that column (only the whole "bare" content layout,
+   which also drops the left sidebar), so it's hidden here instead; the grid
+   is widened back to two tracks so hiding it doesn't leave a blank gutter. */
+[data-blume-toc] {
+  display: none;
+}
+
+/* Scoped with :has() rather than a bare attribute selector: bare-layout pages
+   (the homepage) share the same [data-blume-doc-grid] wrapper but never render
+   a [data-blume-toc] aside at all (not just hidden), so :has() correctly skips
+   them and leaves their single-column grid untouched. */
+@media (width >= 80rem) {
+  [data-blume-doc-grid]:has([data-blume-toc]) {
+    grid-template-columns: 17.5rem minmax(0, 1fr);
+  }
+}
+
+/* Blume's `.prose` theme layer is tuned for API-doc-style technical content:
+   14px muted-gray body text, 1.7 line-height. The reference site's book-reading
+   prose is much larger and pure black — measured on thenetworkstate.com's
+   `.book-section p`: 16px base, up to 22px at desktop widths, 1.45 line-height,
+   black. This file is unlayered, so it wins over Blume's `@layer base` rules
+   without needing `!important`. */
+.prose {
+  color: black;
+}
+
+:root[data-theme="dark"] .prose {
+  color: white;
+}
+
+.prose :where(p) {
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+@media (width >= 40rem) {
+  .prose :where(p) {
+    font-size: 1.25rem;
+  }
+}
+
+@media (width >= 48rem) {
+  .prose :where(p) {
+    font-size: 1.375rem;
+  }
+}
+
+/* Blume's page template always renders a plain `<h1>{title}</h1>` as the
+   article's first child, ahead of the MDX body — there's no per-page slot to
+   suppress it. TitleHierarchy (used inside the MDX body) renders the real
+   styled title, so the plain one is hidden rather than shown twice. It still
+   carries the frontmatter title into <title>/OG tags and the sidebar label. */
+article > h1:first-child {
+  display: none;
+}

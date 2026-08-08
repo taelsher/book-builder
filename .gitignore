@@ -1,0 +1,42 @@
+# Dependencies
+node_modules/
+editor/node_modules/
+
+# Blume / Astro generated runtime & build output
+.blume/
+.blume-verify/
+dist/
+
+# Vite (editor sub-app)
+editor/dist/
+.vite/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.idea/
+*.swp
+*.swo
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# pnpm is the package manager (patchedDependencies + pnpm-lock.yaml)
+package-lock.json
+editor/package-lock.json
+
+# Archives / accidental duplicates
+*.zip
+networkstate-blume-rebuild/

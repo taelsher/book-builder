@@ -1,0 +1,248 @@
+---
+// Bespoke landing page matching thenetworkstate.com's homepage — a custom
+// Blume page (see node_modules/blume/docs/advanced/custom-pages.mdx) so it
+// wins over the generic docs-shell route the old docs/index.mdx produced.
+// Uses RootLayout with contentLayout="bare" (the same recipe Blume's own
+// generated changelog index uses — see templates.ts's changelogIndexTemplate)
+// rather than PageLayout: PageLayout hardcodes Blume's stock Header with no
+// override-injection mechanism at all, so it can never render this project's
+// Header.astro override. RootLayout + "bare" gets the full site chrome
+// (including the Header override) while still dropping the docs sidebar/
+// prose/TOC grid, matching the reference site's full-width two-column layout.
+// Structure/classes/hrefs below are measured directly from the live DOM (see
+// reference/notes.md) — the chapter/page list is driven by
+// data.navigation.sidebar rather than a second hardcoded copy of the outline.
+import RootLayout from "blume/components/layout/RootLayout.astro";
+import Empty from "blume/components/layout/Empty.astro";
+import data from "blume:data";
+import { withBase } from "blume/components/islands/base-path.ts";
+import { resolveSlot } from "blume/components/layout/overrides.ts";
+import { layoutOverrides } from "../.blume/src/generated/components.ts";
+
+const { config } = data;
+
+const LayoutComponent = resolveSlot(layoutOverrides.Layout, RootLayout);
+
+// The homepage is first in reading order, so RootLayout's sidebar-derived
+// pagination would otherwise show a "Next Section: Reviews" footer that
+// doesn't exist on the live site — suppress it here only, leaving chapter
+// pages' real prev/next untouched.
+const homeLayoutOverrides = { ...layoutOverrides, Pagination: Empty };
+
+const linkButtonClass =
+  "box-border flex items-center text-black dark:text-white no-underline! rounded-full justify-center my-1 hover:bg-gray-50 dark:hover:bg-gray-800 hover:border-gray-400 dark:hover:border-gray-500 hover:text-black dark:hover:text-white border border-gray-300 dark:border-gray-600 p-2 font-semibold whitespace-nowrap text-[13px] lg:text-[16px] px-[8px] lg:px-[18px] py-[10px] lg:py-2.5 h-[44px] flex-1 lg:flex-none lg:w-full lg:ml-2";
+
+interface LinkButton {
+  label: string;
+  href: string;
+  external?: boolean;
+  icon: string;
+  iconSize: number;
+  badge?: string;
+  mobile?: boolean;
+}
+
+// Order/membership/hrefs/icons measured from the live homepage's desktop
+// stack; `mobile: true` marks the subset that also appears in the mobile
+// 2x2 grid (same four, same order, as the live site's own subset).
+const LINK_BUTTONS: LinkButton[] = [
+  { label: "School", href: "https://ns.com", external: true, icon: "/images/flag-icon.svg", iconSize: 16, badge: "NEW", mobile: true },
+  { label: "Conference", href: "https://ns.com/conference", external: true, icon: "/images/conference.svg", iconSize: 16 },
+  { label: "Book", href: "/preamble", icon: "/images/book.svg", iconSize: 16 },
+  { label: "Amazon", href: "https://www.amazon.com/dp/B09VPKZR3G", external: true, icon: "/images/amazon-sm.svg", iconSize: 16, mobile: true },
+  { label: "PDF", href: "/book/tns.pdf", external: true, icon: "/images/download.svg", iconSize: 16, mobile: true },
+  { label: "Podcast", href: "https://ns.com/podcast", external: true, icon: "/images/podcast.svg", iconSize: 20, mobile: true },
+  { label: "Fund", href: "https://venture.angellist.com/v/back/balaji-fund", external: true, icon: "/images/fund.svg", iconSize: 14 },
+  { label: "Reviews", href: "/reviews", icon: "/images/reviews.svg", iconSize: 26 },
+  { label: "Dashboard", href: "https://ns.com/dashboard", external: true, icon: "/images/dashboard.svg", iconSize: 24 },
+  { label: "Newsletter", href: "https://balajis.com", external: true, icon: "/images/newsletter.svg", iconSize: 16 },
+];
+
+const mobileButtons = LINK_BUTTONS.filter((button) => button.mobile);
+
+const chapters = data.navigation.sidebar
+  .filter((node) => node.kind === "group")
+  .map((group, index) => {
+    const pages = group.children.filter((child) => child.kind === "page");
+    return {
+      number: index + 1,
+      label: group.label,
+      firstPageRoute: pages[0]?.route,
+      pages,
+    };
+  });
+---
+
+<LayoutComponent
+  analytics={config.analytics}
+  appleIcon={config.appleIcon}
+  banner={config.banner}
+  codeWrap={config.codeWrap}
+  contentLayout="bare"
+  exportEpub={false}
+  exportPdf={false}
+  favicon={config.favicon}
+  feeds={data.feeds}
+  fontCssVars={data.fontCssVars}
+  headings={[]}
+  imageZoom={config.imageZoom}
+  indexable={true}
+  layout={homeLayoutOverrides}
+  logo={config.logo}
+  mcp={config.mcp}
+  navigation={data.navigation}
+  noindex={false}
+  ogGenerated={config.og.enabled}
+  ogImage={config.og.enabled ? withBase("/og/index.png") : null}
+  page={{ title: "", description: config.description, route: "/" }}
+  searchEnabled={config.search.enabled}
+  site={{ title: config.title, description: config.description }}
+  siteUrl={config.site}
+  structuredDataEnabled={config.structuredData}
+  themeMode={config.theme.mode}
+  toc={config.toc}
+  x={config.x}
+>
+  <div class="not-prose w-[100vw] ml-[calc(50%-50vw)] mr-[calc(50%-50vw)]">
+  <div class="mx-auto flex w-full max-w-[1100px] flex-col gap-6 px-4 py-6 sm:px-6 lg:flex-row lg:justify-between lg:p-8">
+    <div class="mr-4 box-content flex w-full flex-col items-center justify-start p-0 sm:px-2 lg:w-[290px] lg:min-w-[290px]">
+      <a href={withBase("/preamble")}>
+        <img
+          alt="Book Cover"
+          class="cursor-pointer border-gray-200 shadow-lg dark:border-gray-700"
+          height="252"
+          src="/images/cover-tns-small.png"
+          width="189"
+        />
+      </a>
+      <div class="mb-2 flex w-full flex-col items-center gap-2 pt-6 lg:m-5 lg:gap-0 lg:pt-0">
+        <div class="grid w-full grid-cols-2 gap-2 lg:hidden">
+          {
+            mobileButtons.map((button) => (
+              <a
+                class={linkButtonClass}
+                href={button.external ? button.href : withBase(button.href)}
+                rel={button.external ? "noreferrer" : undefined}
+                target={button.external ? "_blank" : undefined}
+              >
+                <span class="flex items-center">
+                  <img
+                    alt={`${button.label} Icon`}
+                    class="icon-invert mr-2 lg:mr-3"
+                    height={button.iconSize}
+                    src={button.icon}
+                    width={button.iconSize}
+                  />
+                  {button.label}
+                </span>
+                {button.badge && (
+                  <span class="mx-2 flex items-center justify-center rounded-md bg-[#006DFF] text-white">
+                    <span class="mx-1 my-[2px] text-[10px] font-bold">{button.badge}</span>
+                  </span>
+                )}
+              </a>
+            ))
+          }
+        </div>
+        <div class="hidden w-full flex-col items-center gap-0 lg:flex">
+          {
+            LINK_BUTTONS.map((button) => (
+              <a
+                class={linkButtonClass}
+                href={button.external ? button.href : withBase(button.href)}
+                rel={button.external ? "noreferrer" : undefined}
+                target={button.external ? "_blank" : undefined}
+              >
+                <span class="flex items-center">
+                  <img
+                    alt={`${button.label} Icon`}
+                    class="icon-invert mr-2 lg:mr-3"
+                    height={button.iconSize}
+                    src={button.icon}
+                    width={button.iconSize}
+                  />
+                  {button.label}
+                </span>
+                {button.badge && (
+                  <span class="mx-2 flex items-center justify-center rounded-md bg-[#006DFF] text-white">
+                    <span class="mx-1 my-[2px] text-[10px] font-bold">{button.badge}</span>
+                  </span>
+                )}
+              </a>
+            ))
+          }
+          <a
+            class={linkButtonClass}
+            href="https://x.com/ns"
+            rel="noreferrer"
+            target="_blank"
+          >
+            <span class="flex items-center">
+              <svg
+                class="mr-2 lg:mr-3"
+                fill="currentColor"
+                height="16"
+                stroke="currentColor"
+                stroke-width="0"
+                viewBox="0 0 512 512"
+                width="16"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48zM364.4 421.8h39.1L151.1 88h-42L364.4 421.8z" />
+              </svg>
+              @ns
+            </span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <div class="m-0 flex flex-grow flex-col p-0 sm:ml-6 sm:pr-[10px] sm:pl-0">
+      <div class="hidden w-full flex-col border-b border-gray-300 pb-6 sm:flex dark:border-gray-600">
+        <div class="mb-3 font-bold text-gray-700 text-lg dark:text-gray-100">Description</div>
+        <div class="text-gray-700 dark:text-gray-300">{config.description}</div>
+      </div>
+
+      {
+        chapters.map((chapter) => (
+          <div class="flex w-full flex-col last:pb-16">
+            <a class="no-underline!" href={chapter.firstPageRoute ? withBase(chapter.firstPageRoute) : undefined}>
+              <div class="mt-[18px] mb-4 flex cursor-pointer text-[15px] text-black leading-6 no-underline sm:text-lg dark:text-white" style="font-weight:700">
+                {chapter.number}. {chapter.label}
+                <div class="ml-3 h-6 rounded-full border border-gray-300 border-solid p-0 hover:bg-gray-50 dark:border-gray-600 dark:hover:bg-gray-800">
+                  <img alt={chapter.label} class="icon-invert" height="24" src="/images/jump.svg" width="24" />
+                </div>
+              </div>
+            </a>
+            <div class="flex w-full flex-col overflow-hidden rounded-xl border border-gray-300 dark:border-gray-600">
+              {
+                chapter.pages.map((page) => (
+                  <div class="border-gray-300 border-b last:border-none dark:border-gray-600">
+                    <a class="no-underline!" href={withBase(page.route)}>
+                      <div class="m-0 box-border flex w-full flex-row items-center px-3 py-2 text-black text-sm no-underline hover:bg-gray-50 active:bg-gray-100 dark:text-white dark:hover:bg-gray-800 dark:active:bg-gray-700">
+                        <div class="mr-4 rounded-full border border-gray-300 border-solid p-0 dark:border-gray-600">
+                          <img alt={page.label} class="icon-invert" height="24" src="/images/jump.svg" width="24" />
+                        </div>
+                        {page.label}
+                      </div>
+                    </a>
+                  </div>
+                ))
+              }
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+  </div>
+</LayoutComponent>
+
+<style>
+  /* The two-column content breaks out of the article's max-width via a
+     100vw-wide wrapper; 100vw includes the scrollbar's width, which
+     otherwise adds a few px of horizontal overflow on this page only. */
+  :global(html) {
+    overflow-x: hidden;
+  }
+</style>

@@ -1,0 +1,26 @@
+diff --git a/dist/cli/index.js b/dist/cli/index.js
+index 48efee558d52679c68d8cbb1c1cf3930f7872acb..c678f8cb9d69f55f34c1462551e050a77b982d2d 100755
+--- a/dist/cli/index.js
++++ b/dist/cli/index.js
+@@ -9184,8 +9184,6 @@ var buildFileSystemSidebar = (pages, folderMeta, sharedMeta, metaPrefix, display
+   }
+   applyFolderMeta(root, folderMeta, sharedMeta, metaPrefix);
+   sortNodes(root.children, diagnostics);
+-  hoistPages(root.children, display === "flat");
+-  hoistTabSections(root.children, tabPaths, display === "flat");
+   return root.children.map((child) => toNavNode(child, display));
+ };
+ var normalizeRef = (ref) => {
+diff --git a/src/core/navigation.ts b/src/core/navigation.ts
+index dce70fa5040337ea1aa6049910ec47bc45ec592f..039e82412da61398c67ea540a7f9382a125a3061 100644
+--- a/src/core/navigation.ts
++++ b/src/core/navigation.ts
+@@ -463,8 +463,6 @@ const buildFileSystemSidebar = (
+ 
+   applyFolderMeta(root, folderMeta, sharedMeta, metaPrefix);
+   sortNodes(root.children, diagnostics);
+-  hoistPages(root.children, display === "flat");
+-  hoistTabSections(root.children, tabPaths, display === "flat");
+   return root.children.map((child) => toNavNode(child, display));
+ };
+ 

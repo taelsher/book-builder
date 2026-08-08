@@ -1,0 +1,66 @@
+---
+// Override of blume/components/layout/TableOfContents.astro. Same
+// mobile-accordion / desktop-rail split as the built-in; reskinned link
+// styling to match the reference site's measured muted-foreground/border
+// tokens (theme.css) rather than introducing a new interaction pattern.
+import type { Heading } from "blume/core/types.ts";
+import Icon from "blume/components/Icon.astro";
+
+interface Props {
+  headings: Heading[];
+  title: string;
+  variant: "mobile" | "desktop";
+}
+
+const { headings, title, variant } = Astro.props;
+---
+
+{
+  headings.length > 0 && variant === "mobile" && (
+    <details class="group mx-auto mb-6 max-w-content rounded-blume border border-border xl:hidden">
+      <summary class="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-3 font-medium text-foreground text-sm [&::-webkit-details-marker]:hidden">
+        <span>{title}</span>
+        <Icon
+          class="text-muted-foreground transition-transform group-open:rotate-180"
+          name="chevron-down"
+          size={16}
+        />
+      </summary>
+      <blume-toc class="block">
+        <ul class="m-0 list-none border-border border-t p-2">
+          {headings.map((heading) => (
+            <li style={`padding-inline-start:${(heading.depth - 2) * 0.75}rem`}>
+              <a
+                class="block rounded-md px-2 py-1.5 text-muted-foreground text-sm transition-colors hover:text-foreground aria-[current=location]:font-medium aria-[current=location]:text-foreground"
+                href={`#${heading.slug}`}
+              >
+                {heading.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </blume-toc>
+    </details>
+  )
+}
+{
+  headings.length > 0 && variant === "desktop" && (
+    <>
+      <p class="mb-3 font-semibold text-foreground text-sm">{title}</p>
+      <blume-toc class="block">
+        <ul class="m-0 list-none border-border border-l p-0 ps-3">
+          {headings.map((heading) => (
+            <li style={`padding-inline-start:${(heading.depth - 2) * 0.75}rem`}>
+              <a
+                class="block py-1.5 text-muted-foreground text-sm transition-colors hover:text-foreground aria-[current=location]:font-medium aria-[current=location]:text-foreground"
+                href={`#${heading.slug}`}
+              >
+                {heading.text}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </blume-toc>
+    </>
+  )
+}

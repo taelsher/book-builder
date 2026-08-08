@@ -1,0 +1,405 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+@import "tw-animate-css";
+@import "../../theme.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/* ── Valkyrie font (matches blume.config.ts) ── */
+@font-face {
+  font-family: "valkyrieFont";
+  src: url("/fonts/valkyrie-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "valkyrieFont";
+  src: url("/fonts/valkyrie-a-regular.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "valkyrieFont";
+  src: url("/fonts/valkyrie-bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "valkyrieFont";
+  src: url("/fonts/valkyrie-italic.woff2") format("woff2");
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+@font-face {
+  font-family: "valkyrieFont";
+  src: url("/fonts/valkyrie-bold-italic.woff2") format("woff2");
+  font-weight: 700;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #17202a;
+}
+
+#root {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  flex-shrink: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-right: 1px solid #e2e2e2;
+  padding: 12px;
+}
+
+/* Draggable resize handle between sidebar and main */
+.resize-handle {
+  width: 4px;
+  flex-shrink: 0;
+  cursor: col-resize;
+  background: transparent;
+  transition: background-color 0.15s;
+  position: relative;
+}
+
+.resize-handle::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -2px;
+  right: -2px;
+  bottom: 0;
+}
+
+.resize-handle:hover,
+.resize-handle.dragging {
+  background: #1a73e8;
+}
+
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.toolbar-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid #e2e2e2;
+}
+
+.editor-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 16px;
+}
+
+/* Toolbar spans full width; only the prose column is constrained to 714px. */
+.editor-scroll .mdxeditor-root-contenteditable {
+  max-width: 714px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.empty-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #888;
+}
+
+/* ── Prose: Valkyrie + responsive sizing (mirrors theme.css breakpoints) ── */
+.mdxeditor-root-contenteditable {
+  font-family: "valkyrieFont", serif;
+}
+
+.mdxeditor-root-contenteditable p {
+  font-size: 1rem;
+  line-height: 1.45;
+  margin-top: 0;
+  margin-bottom: 0.75em;
+}
+
+@media (min-width: 40rem) {
+  .mdxeditor-root-contenteditable p {
+    font-size: 1.25rem;
+  }
+}
+
+@media (min-width: 48rem) {
+  .mdxeditor-root-contenteditable p {
+    font-size: 1.375rem;
+  }
+}
+
+/* ── Unsaved changes indicator ── */
+.unsaved-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #b45309;
+}
+
+.unsaved-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #f59e0b;
+  animation: unsaved-pulse 2s ease-in-out infinite;
+}
+
+@keyframes unsaved-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+/* ── TitleHierarchy editor ── */
+.title-hierarchy-editor {
+  text-align: center;
+  margin: 1rem 0 2rem;
+  padding: 1rem 0;
+}
+
+/* Shared reset for all inputs/textareas inside the title block */
+.title-hierarchy-editor input,
+.title-hierarchy-editor textarea {
+  border: none;
+  background: transparent;
+  outline: none;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+}
+
+.title-hierarchy-editor input:focus,
+.title-hierarchy-editor textarea:focus {
+  outline: 2px solid #1a73e8;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Full-width centered input for chapter title only */
+.title-hierarchy-editor input.th-chapter-title {
+  text-align: center;
+  width: 100%;
+  display: block;
+}
+
+/* Page title: left-aligned textarea that wraps, matching the live site */
+.title-hierarchy-editor textarea.th-page-title {
+  text-align: left;
+  width: 100%;
+  display: block;
+  resize: none;
+  overflow: hidden;
+}
+
+.th-chapter-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #111;
+  font-family: "valkyrieFont", serif;
+  margin-bottom: 0;
+}
+
+@media (min-width: 48rem) {
+  .th-chapter-title {
+    font-size: 2.375rem;
+  }
+}
+
+.th-chapter-number-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-top: 0.875rem;
+}
+
+.th-rule {
+  flex: 1;
+  height: 1px;
+  background: #111;
+}
+
+.th-chapter-number-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2em;
+  padding: 0 0.5rem;
+  font-family: "valkyrieFont", serif;
+  font-weight: 400;
+  font-size: 0.875rem;
+  color: #111;
+  white-space: nowrap;
+}
+
+@media (min-width: 48rem) {
+  .th-chapter-number-wrap {
+    font-size: 1.375rem;
+  }
+}
+
+.th-chapter-number-prefix {
+  pointer-events: none;
+}
+
+/* Compact inline input — just wide enough for "12" */
+.title-hierarchy-editor input.th-chapter-number {
+  font-family: "valkyrieFont", serif;
+  font-weight: 400;
+  font-size: inherit;
+  color: inherit;
+  width: 1.8ch;
+  text-align: left;
+}
+
+.th-page-title {
+  font-family: "valkyrieFont", serif;
+  font-size: 2.5rem;
+  font-weight: 400;
+  font-style: italic;
+  line-height: 1.15;
+  color: #111;
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+/* ── PillButton editor ── */
+.pill-button-editor {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  margin: 0.25em 0;
+}
+
+.pill-button-preview {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #000;
+  color: #fff;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.pill-button-preview:hover {
+  background: #1f2937;
+}
+
+.pill-button-chevron {
+  flex-shrink: 0;
+}
+
+/* Allow NestedLexicalEditor content inside the pill to be white */
+.pill-button-preview [data-lexical-editor] {
+  color: #fff;
+  outline: none;
+  min-width: 2em;
+}
+
+.pill-button-href-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: #666;
+}
+
+.pill-button-href-label {
+  font-weight: 500;
+  font-family: monospace;
+}
+
+.pill-button-href-input {
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 12px;
+  font-family: monospace;
+  width: 240px;
+  outline: none;
+}
+
+.pill-button-href-input:focus {
+  border-color: #1a73e8;
+  box-shadow: 0 0 0 2px rgba(26, 115, 232, 0.2);
+}

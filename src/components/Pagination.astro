@@ -1,0 +1,37 @@
+---
+// Override of blume/components/layout/Pagination.astro. The reference site
+// shows only a single forward "Next Section" pill (reference/notes.md), not
+// Blume's default prev+next pair — reproduced with the same PillButton used
+// elsewhere.
+import { withBase } from "blume/components/islands/base-path.ts";
+import { EN_UI } from "blume/core/i18n-ui.ts";
+import type { UIStrings } from "blume/core/i18n-ui.ts";
+import type { FlatPage } from "blume/components/layout/nav-utils.ts";
+import PillButton from "./PillButton.astro";
+
+interface Props {
+  prev: FlatPage | null;
+  next: FlatPage | null;
+  strings: UIStrings["page"];
+}
+
+const { next, strings } = Astro.props;
+const s = { ...EN_UI.page, ...strings };
+---
+
+{
+  next && (
+    <nav
+      aria-label={s.pagination}
+      class="mx-auto mt-12 flex max-w-content items-center justify-between gap-4 border-border border-t pt-6"
+    >
+      <div>
+        <p class="font-bold text-black text-sm dark:text-white">Next Section:</p>
+        <p class="font-semibold text-gray-600 text-xs dark:text-gray-400">{next.label}</p>
+      </div>
+      <PillButton href={withBase(next.route)}>
+        <span class="font-bold text-sm">Next</span>
+      </PillButton>
+    </nav>
+  )
+}
