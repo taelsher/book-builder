@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import React, { forwardRef, useCallback, useEffect, useRef } from "react";
 import { ArrowUp, ArrowDown, X } from "lucide-react";
 import {
   MDXEditor,
@@ -105,11 +105,54 @@ function SearchWidget() {
 }
 
 const Editor = forwardRef(function Editor({ markdown, onChange }, ref) {
+  const cleanMarkdownRef = useRef(markdown);
+  const isReadyRef = useRef(false);
+
+  useEffect(() => {
+    cleanMarkdownRef.current = markdown;
+    isReadyRef.current = false;
+
+    // Allow 400ms for MDXEditor & plugins to initialize and normalize AST
+    const timer = setTimeout(() => {
+      isReadyRef.current = true;
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [markdown]);
+
+  const handleUserInteraction = useCallback(() => {
+    isReadyRef.current = true;
+  }, []);
+
+  const handleChange = useCallback(
+    (newMarkdown) => {
+      // During initialization, update the clean baseline without marking dirty
+      if (!isReadyRef.current) {
+        cleanMarkdownRef.current = newMarkdown;
+        return;
+      }
+
+      // After initialization, notify parent only if content differs from clean baseline
+      if (
+        newMarkdown !== cleanMarkdownRef.current &&
+        newMarkdown.trim() !== cleanMarkdownRef.current.trim()
+      ) {
+        onChange?.(newMarkdown);
+      }
+    },
+    [onChange],
+  );
+
   return (
-    <MDXEditor
-      ref={ref}
-      markdown={markdown}
-      onChange={onChange}
+    <div
+      className="editor-wrapper flex-1 overflow-hidden"
+      onKeyDown={handleUserInteraction}
+      onMouseDown={handleUserInteraction}
+    >
+      <MDXEditor
+        ref={ref}
+        markdown={markdown}
+        onChange={handleChange}
       contentEditableClassName="prose max-w-none focus:outline-none"
       plugins={[
         frontmatterPlugin(),
@@ -162,6 +205,7 @@ const Editor = forwardRef(function Editor({ markdown, onChange }, ref) {
         }),
       ]}
     />
+    </div>
   );
 });
 
